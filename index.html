@@ -4,10 +4,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wavelength - Juego</title>
+    <title>Wavelength - Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
     <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --container-bg: #ffffff;
+            --text-color: #2f3542;
+            --accent-color: #3742fa;
+            --btn-next: #5352ed;
+        }
+
+        body.dark-mode {
+            --bg-color: #1e1e2e;
+            --container-bg: #2d2d44;
+            --text-color: #f8f8f2;
+            --accent-color: #70a1ff;
+            --btn-next: #5f27cd;
+        }
+
         body {
             font-family: "Roboto", sans-serif;
             display: flex;
@@ -15,46 +31,47 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
         }
 
-        /* CORRECCIÓN: El contenedor del juego empieza oculto */
+        .theme-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            padding: 10px;
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
         .game-container {
-            display: none; 
+            display: none;
             text-align: center;
-            background-color: white;
+            background-color: var(--container-bg);
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 600px;
-            height: 630px;
         }
 
         .title {
             font-family: "Orbitron", sans-serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: #3742fa;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 42px;
+            color: var(--accent-color);
             margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-
-        .how-to-play {
-            margin-top: 20px;
-            background-color: #a4b0be;
         }
 
         .board {
             width: 400px;
             height: 200px;
-            background-color: #e0e0e0;
+            background-color: #444;
             border-radius: 200px 200px 0 0;
             position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.1);
             margin: 0 auto;
+            overflow: hidden;
         }
 
         .target-area {
@@ -62,310 +79,277 @@
             height: 200px;
             border-radius: 200px 200px 0 0;
             position: absolute;
-            overflow: hidden;
         }
 
         .needle-container {
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 40px;
-            height: 180px;
+            width: 4px;
+            height: 190px;
             transform: translateX(-50%);
             cursor: pointer;
+            z-index: 10;
         }
 
         .needle {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 4px;
-            height: 200px;
+            width: 100%;
+            height: 100%;
             background-color: #ff4757;
             transform-origin: bottom center;
-            transition: transform 0.2s ease;
+            border-radius: 4px;
         }
 
         .clues-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 20px;
-            height: 60px;
-        }
-
-        .clue {
-            flex: 1;
-            font-size: 18px;
+            margin: 30px 0;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #2f3542;
-            text-align: center;
-            padding: 0 10px;
         }
 
         .bidirectional-arrow {
-            width: 100px;
+            width: 80px;
             height: 2px;
-            background-color: #3742fa;
+            background-color: var(--accent-color);
+            margin: 0 15px;
             position: relative;
-            margin: 0 20px;
         }
 
-        .bidirectional-arrow::before, .bidirectional-arrow::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 10px;
-            height: 10px;
-            border-top: 2px solid #3742fa;
-            border-right: 2px solid #3742fa;
-        }
-
-        .bidirectional-arrow::before { left: 0; transform: translateY(-50%) rotate(-135deg); }
-        .bidirectional-arrow::after { right: 0; transform: translateY(-50%) rotate(45deg); }
-
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        button {
-            font-size: 16px;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #5352ed;
-            color: white;
+        .controls button {
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
-        }
-
-        button:hover { background-color: #3742fa; }
-
-        #totalScore {
-            margin-top: 20px;
+            border-radius: 8px;
+            color: white;
             font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
 
-        .current-team { color: #3742fa; font-size: 1.2rem; }
+        /* Colores de botones solicitados */
+        #toggleButton.hide-mode { background-color: #ff9f43; } /* Naranja */
+        #toggleButton.reveal-mode { background-color: #2ed573; } /* Verde */
+        #nextRoundButton { background-color: var(--btn-next); }
 
         .team-setup {
-            background-color: white;
+            background-color: var(--container-bg);
             padding: 2rem;
             border-radius: 15px;
+            width: 450px;
             text-align: center;
-            width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .team-name-input { display: block; margin: 10px auto; padding: 5px; }
+        .team-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
 
-        /* Modal */
+        .team-row input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; flex: 1; }
+        .team-row select { border-radius: 5px; cursor: pointer; }
+
+        .score-item { margin: 5px 0; padding: 5px; border-radius: 5px; }
+        .active-team { border: 2px solid var(--accent-color); font-size: 1.3rem; }
+
         .modal {
             display: none;
             position: fixed;
-            z-index: 2000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            z-index: 100;
+            left:0; top:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6);
         }
-
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 500px;
+            background: var(--container-bg);
+            margin: 15% auto;
+            padding: 25px;
+            width: 70%;
             border-radius: 15px;
         }
     </style>
 </head>
 
 <body>
-    <div id="howToPlayModal" class="modal">
-        <div class="modal-content">
-            <h2>Cómo jugar Wavelength</h2>
-            <div class="modal-body">
-                <ol>
-                    <li>Se muestra una pareja de conceptos opuestos.</li>
-                    <li>El "Psíquico" da una pista sobre dónde está el objetivo en el espectro entre ambos.</li>
-                    <li>El equipo debe mover la aguja según la pista.</li>
-                    <li>Pulsa "Ocultar Objetivo" antes de pasar el móvil/ratón al equipo.</li>
-                    <li>Pulsa "Revelar Objetivo" para ver los puntos obtenidos.</li>
-                </ol>
-            </div>
-            <button onclick="closeModal()">¡Entendido!</button>
-        </div>
-    </div>
+    <div class="theme-switch" onclick="toggleTheme()">🌓 Modo</div>
 
     <div id="teamSetup" class="team-setup">
         <h1 class="title">Wavelength</h1>
-        <h3>Configuración</h3>
-        <label>Número de Equipos (1-5):</label><br>
-        <input type="number" id="teamCount" min="1" max="5" value="2" style="margin: 10px 0;"><br>
-        <div id="teamNames"></div>
-        <button id="startGame">Empezar Partida</button><br>
-        <button id="howToPlayButton" class="how-to-play">Instrucciones</button>
+        <p>Número de Equipos:</p>
+        <input type="number" id="teamCount" min="1" max="5" value="2" style="width: 50px; margin-bottom: 20px;">
+        <div id="teamInputs"></div>
+        <button onclick="startGame()" style="background: #2ed573; color: white; padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer;">Empezar Juego</button>
+        <br><br>
+        <button onclick="showInstructions()" style="background: #a4b0be; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Instrucciones</button>
     </div>
 
-    <div class="game-container" id="gameContainer">
+    <div id="gameContainer" class="game-container">
         <h1 class="title">Wavelength</h1>
         <div class="board">
-            <div class="target-area" id="targetArea"></div>
-            <div class="needle-container" id="needleContainer">
-                <div class="needle" id="needle"></div>
+            <div id="targetArea" class="target-area"></div>
+            <div id="needleContainer" class="needle-container">
+                <div id="needle" class="needle"></div>
             </div>
         </div>
         <div class="clues-container">
-            <div id="leftClue" class="clue"></div>
+            <div id="leftClue"></div>
             <div class="bidirectional-arrow"></div>
-            <div id="rightClue" class="clue"></div>
+            <div id="rightClue"></div>
         </div>
         <div class="controls">
-            <button id="toggleButton">Ocultar Objetivo</button>
-            <button id="nextRoundButton">Siguiente Ronda</button>
-            <button id="newGameButton" style="background-color: #ff4757;">Reiniciar Todo</button>
+            <button id="toggleButton" class="hide-mode" onclick="handleToggle()">Ocultar Objetivo</button>
+            <button id="nextRoundButton" onclick="nextRound()">Siguiente Ronda</button>
+            <button onclick="location.reload()" style="background: #ff4757;">Reiniciar Todo</button>
         </div>
-        <div id="score" style="margin-top: 15px; font-weight: bold; color: #3742fa;"></div>
-        <div id="totalScore"></div>
+        <div id="scoreMsg" style="margin: 20px 0; font-weight: bold;"></div>
+        <div id="scoreboard"></div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>Instrucciones</h2>
+            <p>1. El Psíquico mira el objetivo y da una pista.<br>
+               2. Pulsa <b>Ocultar Objetivo</b> (Naranja).<br>
+               3. El equipo mueve la aguja roja.<br>
+               4. Pulsa <b>Revelar Objetivo</b> (Verde) para ver los puntos.</p>
+            <button onclick="document.getElementById('modal').style.display='none'">Cerrar</button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         const clues = [
-            ["Mala compañía", "Buena compañía"], ["Película terrible", "Gran película"], ["Persona olvidable", "Persona memorable"],
-            ["Culturalmente insignificante", "Culturalmente significativo"], ["Comida seca", "Comida húmeda"], ["Fácil de hacer", "Difícil de hacer"],
-            ["Se siente mal", "Se siente bien"], ["Sin pelo", "Peludo"], ["Difícil de recordar", "Fácil de recordar"],
-            ["Frío", "Caliente"], ["Inflexible", "Flexible"], ["Comida limpia", "Comida pringosa"],
-            ["Deseo", "Necesidad"], ["Cosa rara de tener", "Cosa normal de tener"], ["Mal fabricado", "Bien fabricado"],
-            ["Lugar silencioso", "Lugar ruidoso"], ["Común", "Raro"], ["Mala influencia", "Modelo a seguir"],
-            ["Duro", "Blando"], ["Feo", "Precioso"], ["Inútil", "Útil"], ["Villano", "Héroe"],
-            ["Hobby aburrido", "Hobby emocionante"], ["Superpoder inútil", "Superpoder increíble"],
-            ["El peor ingrediente para una pizza", "El mejor ingrediente para una pizza"], ["Sonido molesto", "Sonido satisfactorio"],
-            ["Ropa incómoda", "Ropa cómoda"], ["Peor olor", "Mejor olor"], ["Regalo terrible", "Regalo detallista"],
-            ["App inútil", "App imprescindible"], ["Peor sabor", "Mejor sabor"], ["Excusa cutre", "Excusa creíble"],
-            ["Peor invento", "Invento que cambia la vida"], ["Peor relleno de sándwich", "Mejor relleno de sándwich"],
-            ["Tatuaje horrible", "Tatuaje con significado"], ["Nombre de equipo terrible", "Nombre de equipo intimidante"],
-            ["Carrera universitaria inútil", "Carrera que cambia la vida"], ["Peor juego de mesa", "Juego de mesa adictivo"]
+            ["Mala compañía", "Buena compañía"], ["Película terrible", "Gran película"], ["Frío", "Caliente"], ["Inflexible", "Flexible"],
+            ["Deseo", "Necesidad"], ["Cosa rara", "Cosa normal"], ["Duro", "Blando"], ["Feo", "Precioso"], ["Inútil", "Útil"],
+            ["Hobby aburrido", "Hobby emocionante"], ["Peor olor", "Mejor olor"], ["Hábito molesto", "Rasgo adorable"]
         ];
 
         let teams = [];
         let currentTeamIndex = 0;
         let targetAngle = 0;
-        let isDragging = false;
-        let canMoveNeedle = false;
         let isTargetVisible = true;
+        let canMove = false;
 
-        const teamSetup = document.getElementById('teamSetup');
-        const gameContainer = document.getElementById('gameContainer');
-        const teamCountInput = document.getElementById('teamCount');
-        const teamNamesDiv = document.getElementById('teamNames');
-
-        function updateTeamInputs() {
-            teamNamesDiv.innerHTML = '';
-            for (let i = 0; i < teamCountInput.value; i++) {
-                const input = document.createElement('input');
-                input.placeholder = `Nombre Equipo ${i + 1}`;
-                input.className = 'team-name-input';
-                teamNamesDiv.appendChild(input);
+        // Generar inputs de equipo
+        function setupTeams() {
+            const count = document.getElementById('teamCount').value;
+            const container = document.getElementById('teamInputs');
+            container.innerHTML = '';
+            const colors = ["#3742fa", "#2ed573", "#ff4757", "#ffa502", "#e056fd"];
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="team-row">
+                        <input type="text" placeholder="Equipo ${i+1}" id="name${i}">
+                        <select id="color${i}">
+                            <option value="${colors[0]}">Azul</option>
+                            <option value="${colors[1]}" selected>Verde</option>
+                            <option value="${colors[2]}">Rojo</option>
+                            <option value="${colors[3]}">Naranja</option>
+                            <option value="${colors[4]}">Rosa</option>
+                        </select>
+                    </div>`;
             }
         }
 
-        teamCountInput.addEventListener('input', updateTeamInputs);
-        updateTeamInputs();
+        document.getElementById('teamCount').oninput = setupTeams;
+        setupTeams();
 
-        document.getElementById('startGame').onclick = () => {
-            teams = Array.from(teamNamesDiv.children).map(input => ({
-                name: input.value || input.placeholder,
-                score: 0
-            }));
-            teamSetup.style.display = 'none';
-            gameContainer.style.display = 'block';
-            resetRound();
-            updateScoreDisplay();
-        };
-
-        function updateScoreDisplay() {
-            document.getElementById('totalScore').innerHTML = teams.map((t, i) => 
-                `<div class="${i === currentTeamIndex ? 'current-team' : ''}">${t.name}: ${t.score} pts</div>`
-            ).join('');
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
         }
 
-        function resetRound() {
+        function startGame() {
+            const count = document.getElementById('teamCount').value;
+            for(let i=0; i<count; i++) {
+                teams.push({
+                    name: document.getElementById(`name${i}`).value || `Equipo ${i+1}`,
+                    color: document.getElementById(`color${i}`).value,
+                    score: 0
+                });
+            }
+            document.getElementById('teamSetup').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            newRound();
+        }
+
+        function newRound() {
             targetAngle = Math.random() * 180 - 90;
-            const targetArea = document.getElementById('targetArea');
-            targetArea.style.background = `conic-gradient(from -90deg at 50% 100%, #a4b0be 0deg ${targetAngle - 22.5 + 90}deg, #ff6b6b ${targetAngle - 22.5 + 90}deg ${targetAngle - 13.5 + 90}deg, #feca57 ${targetAngle - 13.5 + 90}deg ${targetAngle - 4.5 + 90}deg, #48dbfb ${targetAngle - 4.5 + 90}deg ${targetAngle + 4.5 + 90}deg, #feca57 ${targetAngle + 4.5 + 90}deg ${targetAngle + 13.5 + 90}deg, #ff6b6b ${targetAngle + 13.5 + 90}deg ${targetAngle + 22.5 + 90}deg, #a4b0be ${targetAngle + 22.5 + 90}deg 180deg)`;
+            const area = document.getElementById('targetArea');
+            area.style.background = `conic-gradient(from -90deg at 50% 100%, #a4b0be 0deg ${targetAngle + 67.5}deg, #ff6b6b ${targetAngle + 67.5}deg ${targetAngle + 76.5}deg, #feca57 ${targetAngle + 76.5}deg ${targetAngle + 85.5}deg, #48dbfb ${targetAngle + 85.5}deg ${targetAngle + 94.5}deg, #feca57 ${targetAngle + 94.5}deg ${targetAngle + 103.5}deg, #ff6b6b ${targetAngle + 103.5}deg ${targetAngle + 112.5}deg, #a4b0be ${targetAngle + 112.5}deg 180deg)`;
             
-            const [l, r] = clues[Math.floor(Math.random() * clues.length)];
-            document.getElementById('leftClue').textContent = l;
-            document.getElementById('rightClue').textContent = r;
+            const pair = clues[Math.floor(Math.random()*clues.length)];
+            document.getElementById('leftClue').innerText = pair[0];
+            document.getElementById('rightClue').innerText = pair[1];
             
             isTargetVisible = true;
-            targetArea.style.display = 'block';
+            canMove = false;
+            area.style.display = 'block';
             document.getElementById('needle').style.display = 'none';
-            document.getElementById('toggleButton').textContent = "Ocultar Objetivo";
-            document.getElementById('toggleButton').style.display = "inline-block";
-            document.getElementById('score').textContent = "";
-            canMoveNeedle = false;
+            const btn = document.getElementById('toggleButton');
+            btn.innerText = "Ocultar Objetivo";
+            btn.className = "hide-mode";
+            btn.style.display = "inline-block";
+            document.getElementById('scoreMsg').innerText = "";
+            updateScoreboard();
         }
 
-        document.getElementById('toggleButton').onclick = function() {
-            const targetArea = document.getElementById('targetArea');
+        function handleToggle() {
+            const btn = document.getElementById('toggleButton');
             const needle = document.getElementById('needle');
+            const area = document.getElementById('targetArea');
+
             if (isTargetVisible) {
                 isTargetVisible = false;
-                targetArea.style.display = 'none';
+                area.style.display = 'none';
                 needle.style.display = 'block';
                 needle.style.transform = 'rotate(0deg)';
-                this.textContent = "Revelar Objetivo";
-                canMoveNeedle = true;
+                btn.innerText = "Revelar Objetivo";
+                btn.className = "reveal-mode";
+                canMove = true;
             } else {
                 isTargetVisible = true;
-                targetArea.style.display = 'block';
-                this.style.display = 'none';
-                canMoveNeedle = false;
+                area.style.display = 'block';
+                btn.style.display = 'none';
+                canMove = false;
                 
                 const currentAngle = parseFloat(needle.style.transform.replace('rotate(','')) || 0;
                 const diff = Math.abs(currentAngle - targetAngle);
-                let points = diff <= 4.5 ? 5 : diff <= 13.5 ? 3 : diff <= 22.5 ? 1 : 0;
+                let pts = diff <= 4.5 ? 5 : diff <= 13.5 ? 3 : diff <= 22.5 ? 1 : 0;
                 
-                teams[currentTeamIndex].score += points;
-                document.getElementById('score').textContent = `¡${teams[currentTeamIndex].name} ha ganado ${points} puntos!`;
-                if(points === 5) confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
-                updateScoreDisplay();
+                teams[currentTeamIndex].score += pts;
+                document.getElementById('scoreMsg').innerText = `¡${pts} PUNTOS!`;
+                if(pts === 5) confetti();
+                updateScoreboard();
             }
-        };
+        }
 
-        document.getElementById('nextRoundButton').onclick = () => {
+        function updateScoreboard() {
+            document.getElementById('scoreboard').innerHTML = teams.map((t, i) => `
+                <div class="score-item ${i===currentTeamIndex?'active-team':''}" style="color: ${t.color}">
+                    ${t.name}: ${t.score}
+                </div>
+            `).join('');
+        }
+
+        function nextRound() {
             currentTeamIndex = (currentTeamIndex + 1) % teams.length;
-            resetRound();
-            updateScoreDisplay();
-        };
+            newRound();
+        }
 
-        // CORRECCIÓN: El botón New Game ahora recarga la pantalla de inicio
-        document.getElementById('newGameButton').onclick = () => {
-            if(confirm("¿Seguro que quieres empezar de cero? Se borrarán los nombres y puntos.")) {
-                gameContainer.style.display = 'none';
-                teamSetup.style.display = 'block';
-            }
-        };
+        function showInstructions() { document.getElementById('modal').style.display='block'; }
 
-        // Lógica de movimiento de aguja
-        const container = document.getElementById('needleContainer');
-        const needle = document.getElementById('needle');
-
-        container.onmousedown = () => { if(canMoveNeedle) isDragging = true; };
+        // Movimiento de la aguja
+        let isDragging = false;
+        const cont = document.getElementById('needleContainer');
+        cont.onmousedown = () => { if(canMove) isDragging = true; };
         document.onmouseup = () => isDragging = false;
         document.onmousemove = (e) => {
-            if (!isDragging) return;
-            const rect = container.getBoundingClientRect();
+            if(!isDragging) return;
+            const rect = cont.getBoundingClientRect();
             const angle = Math.atan2(e.clientX - (rect.left + rect.width / 2), rect.bottom - e.clientY) * 180 / Math.PI;
-            needle.style.transform = `rotate(${Math.max(-90, Math.min(90, angle))}deg)`;
+            document.getElementById('needle').style.transform = `rotate(${Math.max(-90, Math.min(90, angle))}deg)`;
         };
-
-        // Modal functions
-        document.getElementById('howToPlayButton').onclick = () => document.getElementById('howToPlayModal').style.display = 'block';
-        function closeModal() { document.getElementById('howToPlayModal').style.display = 'none'; }
     </script>
 </body>
 </html>
