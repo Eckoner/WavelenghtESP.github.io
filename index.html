@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wavelength Game</title>
+    <title>Wavelength - Juego</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet" />
     <style>
@@ -19,7 +19,9 @@
             background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
+        /* CORRECCIÓN: El contenedor del juego empieza oculto */
         .game-container {
+            display: none; 
             text-align: center;
             background-color: white;
             padding: 2rem;
@@ -41,14 +43,7 @@
 
         .how-to-play {
             margin-top: 20px;
-            letter-spacing: 2px;
             background-color: #a4b0be;
-        }
-
-        .subtitle {
-            font-size: 24px;
-            color: #2f3542;
-            margin-bottom: 30px;
         }
 
         .board {
@@ -105,10 +100,6 @@
             font-weight: bold;
             color: #2f3542;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
             padding: 0 10px;
         }
 
@@ -118,11 +109,9 @@
             background-color: #3742fa;
             position: relative;
             margin: 0 20px;
-            flex-shrink: 0;
         }
 
-        .bidirectional-arrow::before,
-        .bidirectional-arrow::after {
+        .bidirectional-arrow::before, .bidirectional-arrow::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -132,21 +121,13 @@
             border-right: 2px solid #3742fa;
         }
 
-        .bidirectional-arrow::before {
-            left: 0;
-            transform: translateY(-50%) rotate(-135deg);
-        }
-
-        .bidirectional-arrow::after {
-            right: 0;
-            transform: translateY(-50%) rotate(45deg);
-        }
+        .bidirectional-arrow::before { left: 0; transform: translateY(-50%) rotate(-135deg); }
+        .bidirectional-arrow::after { right: 0; transform: translateY(-50%) rotate(45deg); }
 
         .controls {
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
             gap: 10px;
         }
 
@@ -158,88 +139,44 @@
             color: white;
             border: none;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
-            flex: 1 0 auto;
-            max-width: 150px;
         }
 
-        button:hover {
-            background-color: #3742fa;
-        }
+        button:hover { background-color: #3742fa; }
 
-        #score,
         #totalScore {
             margin-top: 20px;
-            font-size: 18px;
             font-weight: bold;
-            color: #2f3542;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
+        .current-team { color: #3742fa; font-size: 1.2rem; }
 
         .team-setup {
             background-color: white;
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 2rem auto;
             text-align: center;
+            width: 400px;
         }
 
-        .team-count {
-            margin-bottom: 1rem;
-        }
+        .team-name-input { display: block; margin: 10px auto; padding: 5px; }
 
-        .team-name-input {
-            margin-bottom: 0.5rem;
-        }
-
-        .current-team {
-            font-weight: bold;
-            color: #3742fa;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
-            background-color: #ffffff;
+            background-color: white;
             margin: 10% auto;
-            padding: 30px;
-            width: 90%;
-            max-width: 600px;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
             border-radius: 15px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
-            transform: translateY(-50px);
-            opacity: 0;
-            transition: all 0.3s ease-out;
-        }
-
-        .modal.show .modal-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .close-button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #3742fa;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -247,34 +184,31 @@
 <body>
     <div id="howToPlayModal" class="modal">
         <div class="modal-content">
-            <h2>How to Play Wavelength</h2>
+            <h2>Cómo jugar Wavelength</h2>
             <div class="modal-body">
                 <ol>
-                    <li>A pair of opposing concepts will be displayed.</li>
-                    <li>The Psychic gives a clue where the target is located ON THE SPECTRUM between the two concepts</li>
-                    <li>The Psychic's team decides where to turn the dial.</li>
-                    <li>Click and drag the needle to set your guess.</li>
-                    <li>Click "Hide Target" to lock in your guess.</li>
-                    <li>Click "Reveal Target" to see how close you were.</li>
+                    <li>Se muestra una pareja de conceptos opuestos.</li>
+                    <li>El "Psíquico" da una pista sobre dónde está el objetivo en el espectro entre ambos.</li>
+                    <li>El equipo debe mover la aguja según la pista.</li>
+                    <li>Pulsa "Ocultar Objetivo" antes de pasar el móvil/ratón al equipo.</li>
+                    <li>Pulsa "Revelar Objetivo" para ver los puntos obtenidos.</li>
                 </ol>
             </div>
-            <button class="close-button">Got it!</button>
+            <button onclick="closeModal()">¡Entendido!</button>
         </div>
     </div>
 
     <div id="teamSetup" class="team-setup">
         <h1 class="title">Wavelength</h1>
-        <h2>Team Setup</h2>
-        <div class="team-count">
-            <label for="teamCount">Number of Teams (1-5):</label>
-            <input type="number" id="teamCount" min="1" max="5" value="2">
-        </div>
+        <h3>Configuración</h3>
+        <label>Número de Equipos (1-5):</label><br>
+        <input type="number" id="teamCount" min="1" max="5" value="2" style="margin: 10px 0;"><br>
         <div id="teamNames"></div>
-        <button id="startGame">Start Game</button>
-        <button id="howToPlayButton" class="how-to-play">How to Play</button>
+        <button id="startGame">Empezar Partida</button><br>
+        <button id="howToPlayButton" class="how-to-play">Instrucciones</button>
     </div>
 
-    <div class="game-container">
+    <div class="game-container" id="gameContainer">
         <h1 class="title">Wavelength</h1>
         <div class="board">
             <div class="target-area" id="targetArea"></div>
@@ -283,175 +217,90 @@
             </div>
         </div>
         <div class="clues-container">
-            <div class="clue" id="leftClue"></div>
+            <div id="leftClue" class="clue"></div>
             <div class="bidirectional-arrow"></div>
-            <div class="clue" id="rightClue"></div>
+            <div id="rightClue" class="clue"></div>
         </div>
         <div class="controls">
-            <button id="toggleButton">Hide Target</button>
-            <button id="nextRoundButton">Next Round</button>
-            <button id="newGameButton" style="background-color: red; color: white">New Game</button>
+            <button id="toggleButton">Ocultar Objetivo</button>
+            <button id="nextRoundButton">Siguiente Ronda</button>
+            <button id="newGameButton" style="background-color: #ff4757;">Reiniciar Todo</button>
         </div>
-        <div id="score"></div>
-        <div id="totalScore">Total Score: 0</div>
+        <div id="score" style="margin-top: 15px; font-weight: bold; color: #3742fa;"></div>
+        <div id="totalScore"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
-        const needleContainer = document.getElementById("needleContainer");
-        const needle = document.getElementById("needle");
-        const targetArea = document.getElementById("targetArea");
-        const toggleButton = document.getElementById("toggleButton");
-        const nextRoundButton = document.getElementById("nextRoundButton");
-        const newGameButton = document.getElementById("newGameButton");
-        const scoreElement = document.getElementById("score");
-        const totalScoreElement = document.getElementById("totalScore");
-        const teamSetup = document.getElementById('teamSetup');
-        const teamCount = document.getElementById('teamCount');
-        const teamNames = document.getElementById('teamNames');
-        const startGameButton = document.getElementById('startGame');
-        const gameContainer = document.querySelector('.game-container');
-
-        let isDragging = false;
-        let targetAngle = 0;
-        let isTargetVisible = true;
-        let canMoveNeedle = false;
-        let teams = [];
-        let currentTeamIndex = 0;
-
         const clues = [
             ["Mala compañía", "Buena compañía"], ["Película terrible", "Gran película"], ["Persona olvidable", "Persona memorable"],
             ["Culturalmente insignificante", "Culturalmente significativo"], ["Comida seca", "Comida húmeda"], ["Fácil de hacer", "Difícil de hacer"],
             ["Se siente mal", "Se siente bien"], ["Sin pelo", "Peludo"], ["Difícil de recordar", "Fácil de recordar"],
             ["Frío", "Caliente"], ["Inflexible", "Flexible"], ["Comida limpia", "Comida pringosa"],
-            ["Comida para comer con cubiertos", "Comida para comer con las manos"], ["Deseo", "Necesidad"], ["Cosa rara de tener", "Cosa normal de tener"],
-            ["Mal fabricado", "Bien fabricado"], ["Lugar silencioso", "Lugar ruidoso"], ["Común", "Raro"],
-            ["Mala influencia", "Modelo a seguir"], ["Animal puntiagudo", "Animal redondo"], ["Duro", "Blando"],
-            ["Feo", "Precioso"], ["Trabajo mal pagado", "Trabajo sobrepagado"], ["Habilidad infravalorada", "Habilidad sobrevalorada"],
-            ["Emoji nada sexy", "Emoji sexy"], ["Inútil", "Útil"], ["Villano", "Héroe"], ["El peor día de tu vida", "El mejor día de tu vida"],
-            ["Hobby aburrido", "Hobby emocionante"], ["Superpoder inútil", "Superpoder increíble"], ["Truco de fiesta cutre", "Truco de fiesta genial"],
-            ["Lugar terrible para una primera cita", "Lugar perfecto para una primera cita"], ["Tema de conversación incómodo", "Tema de conversación interesante"],
+            ["Deseo", "Necesidad"], ["Cosa rara de tener", "Cosa normal de tener"], ["Mal fabricado", "Bien fabricado"],
+            ["Lugar silencioso", "Lugar ruidoso"], ["Común", "Raro"], ["Mala influencia", "Modelo a seguir"],
+            ["Duro", "Blando"], ["Feo", "Precioso"], ["Inútil", "Útil"], ["Villano", "Héroe"],
+            ["Hobby aburrido", "Hobby emocionante"], ["Superpoder inútil", "Superpoder increíble"],
             ["El peor ingrediente para una pizza", "El mejor ingrediente para una pizza"], ["Sonido molesto", "Sonido satisfactorio"],
-            ["Ropa incómoda", "Ropa cómoda"], ["El peor olor", "El mejor olor"], ["Asignatura aburrida", "Asignatura fascinante"],
-            ["Regalo terrible", "Regalo detallista"], ["Hábito poco saludable", "Hábito saludable"], ["La peor tarea del hogar", "La tarea más satisfactoria"],
-            ["Canción olvidable", "Canción pegadiza"], ["App inútil", "App imprescindible"], ["Nombre de supervillano cutre", "Nombre de superhéroe increíble"],
-            ["Peor sabor", "Mejor sabor"], ["Exposición aburrida", "Exposición alucinante"], ["Nombre de banda terrible", "Nombre de banda increíble"],
-            ["Peor frase de anuario", "Mejor frase de anuario"], ["Excusa cutre", "Excusa creíble"], ["Mascota de equipo terrible", "Mascota de equipo adorable"],
-            ["Peor invento", "Invento que cambia la vida"], ["Anuncio molesto", "Anuncio memorable"], ["Peor frase para ligar", "Frase para ligar infalible"],
-            ["Peor relleno para un sándwich", "Mejor relleno para un sándwich"], ["Salvapantallas aburrido", "Salvapantallas hipnótico"],
-            ["Truco de vida inútil", "Truco de vida revolucionario"], ["Peor premisa de serie", "Premisa de serie desternillante"],
-            ["Peor canción de karaoke", "Canción de karaoke que anima a todos"], ["Tendencia de redes molesta", "Tendencia de redes divertida"],
-            ["Nombre artístico terrible", "Nombre artístico inolvidable"], ["Peor trabalenguas", "Trabalenguas más desafiante"],
-            ["Tatuaje horrible", "Tatuaje con significado"], ["Pegatina de coche molesta", "Pegatina de coche ingeniosa"],
-            ["Frase gancho molesta", "Frase gancho icónica"], ["Nombre de equipo terrible", "Nombre de equipo intimidante"],
-            ["Peor combinación de sabores", "Combinación de sabores deliciosamente inesperada"], ["Carrera universitaria inútil", "Carrera que te cambia la vida"],
-            ["Tema de podcast terrible", "Podcast para maratonear"], ["Peor atracción de feria", "Atracción de feria emocionante"],
-            ["Truco de mascota molesto", "Truco de mascota impresionante"], ["Entrenamiento terrible", "Entrenamiento efectivo"],
-            ["Peor juego de mesa", "Juego de mesa adictivo"], ["Hábito molesto", "Rasgo adorable"], ["Broma pesada de mal gusto", "Broma inofensiva"],
-            ["Peor mascota de cereales", "Mascota de cereales querida"], ["Sonido de alarma molesto", "Alarma para despertar con suavidad"],
-            ["Lugar de vacaciones terrible", "Destino de vacaciones soñado"], ["Juguete peor", "Juguete que todos quieren"],
-            ["Personaje de TV molesto", "Personaje de TV favorito de los fans"], ["Efecto secundario de superpoder terrible", "Ventaja de superpoder increíble"],
-            ["Peor sabor de helado", "Sabor de helado innovador"], ["Abreviatura de texto molesta", "Abreviatura de texto útil"],
-            ["Idea de disfraz terrible", "Idea de disfraz creativa"], ["Peor error de cocina", "Truco de cocina revolucionario"],
-            ["Ejercicio molesto", "Ejercicio divertido"], ["Peor método de ruptura", "Método de ruptura respetuoso"],
-            ["Peor póster motivacional", "Póster que realmente motiva"], ["Función del coche molesta", "Función del coche útil"],
-            ["Peor escondite", "Escondite ingenioso"], ["Peor tendencia de la era de tus padres", "Tendencia retro genial"],
-            ["Comportamiento de turista molesto", "Comportamiento de turista respetuoso"], ["Peor hábito de compañero de piso", "Cualidad de compañero de piso ideal"],
-            ["Peor excusa para faltar al trabajo", "Razón legítima para faltar al trabajo"], ["Notificación de móvil molesta", "Notificación de móvil importante"],
-            ["Nombre de barco terrible", "Nombre de barco ingenioso"], ["Peor razón para romper", "Razón válida para romper"],
-            ["Comportamiento en el gimnasio molesto", "Etiqueta de gimnasio adecuada"], ["Aerolínea terrible", "Aerolínea de primer nivel"],
-            ["Peor graffiti de baño", "Graffiti de baño profundo"], ["Comportamiento en concierto molesto", "Comportamiento en concierto considerado"],
-            ["Peor casa de Hogwarts", "Mejor casa de Hogwarts"], ["Peor razón para tener mascota", "Gran razón para tener mascota"],
-            ["Asunto de email molesto", "Asunto de email que llama la atención"], ["Nombre de red WiFi terrible", "Nombre de red WiFi ingenioso"]
+            ["Ropa incómoda", "Ropa cómoda"], ["Peor olor", "Mejor olor"], ["Regalo terrible", "Regalo detallista"],
+            ["App inútil", "App imprescindible"], ["Peor sabor", "Mejor sabor"], ["Excusa cutre", "Excusa creíble"],
+            ["Peor invento", "Invento que cambia la vida"], ["Peor relleno de sándwich", "Mejor relleno de sándwich"],
+            ["Tatuaje horrible", "Tatuaje con significado"], ["Nombre de equipo terrible", "Nombre de equipo intimidante"],
+            ["Carrera universitaria inútil", "Carrera que cambia la vida"], ["Peor juego de mesa", "Juego de mesa adictivo"]
         ];
 
+        let teams = [];
+        let currentTeamIndex = 0;
+        let targetAngle = 0;
+        let isDragging = false;
+        let canMoveNeedle = false;
+        let isTargetVisible = true;
+
+        const teamSetup = document.getElementById('teamSetup');
+        const gameContainer = document.getElementById('gameContainer');
+        const teamCountInput = document.getElementById('teamCount');
+        const teamNamesDiv = document.getElementById('teamNames');
+
         function updateTeamInputs() {
-            const count = parseInt(teamCount.value);
-            teamNames.innerHTML = '';
-            for (let i = 0; i < count; i++) {
+            teamNamesDiv.innerHTML = '';
+            for (let i = 0; i < teamCountInput.value; i++) {
                 const input = document.createElement('input');
-                input.type = 'text';
-                input.placeholder = `Team ${i + 1} Name`;
+                input.placeholder = `Nombre Equipo ${i + 1}`;
                 input.className = 'team-name-input';
-                teamNames.appendChild(input);
+                teamNamesDiv.appendChild(input);
             }
         }
 
-        teamCount.addEventListener('change', updateTeamInputs);
+        teamCountInput.addEventListener('input', updateTeamInputs);
         updateTeamInputs();
 
-        startGameButton.addEventListener('click', () => {
-            teams = Array.from(teamNames.children).map(input => ({
+        document.getElementById('startGame').onclick = () => {
+            teams = Array.from(teamNamesDiv.children).map(input => ({
                 name: input.value || input.placeholder,
                 score: 0
             }));
             teamSetup.style.display = 'none';
             gameContainer.style.display = 'block';
+            resetRound();
             updateScoreDisplay();
-        });
+        };
 
         function updateScoreDisplay() {
-            totalScoreElement.innerHTML = teams.map((team, index) =>
-                `<div class="${index === currentTeamIndex ? 'current-team' : ''}">${team.name}: ${team.score}</div>`
+            document.getElementById('totalScore').innerHTML = teams.map((t, i) => 
+                `<div class="${i === currentTeamIndex ? 'current-team' : ''}">${t.name}: ${t.score} pts</div>`
             ).join('');
         }
 
-        function setTargetArea() {
+        function resetRound() {
             targetAngle = Math.random() * 180 - 90;
+            const targetArea = document.getElementById('targetArea');
             targetArea.style.background = `conic-gradient(from -90deg at 50% 100%, #a4b0be 0deg ${targetAngle - 22.5 + 90}deg, #ff6b6b ${targetAngle - 22.5 + 90}deg ${targetAngle - 13.5 + 90}deg, #feca57 ${targetAngle - 13.5 + 90}deg ${targetAngle - 4.5 + 90}deg, #48dbfb ${targetAngle - 4.5 + 90}deg ${targetAngle + 4.5 + 90}deg, #feca57 ${targetAngle + 4.5 + 90}deg ${targetAngle + 13.5 + 90}deg, #ff6b6b ${targetAngle + 13.5 + 90}deg ${targetAngle + 22.5 + 90}deg, #a4b0be ${targetAngle + 22.5 + 90}deg 180deg)`;
-        }
-
-        function setRandomClues() {
-            const [left, right] = clues[Math.floor(Math.random() * clues.length)];
-            document.getElementById("leftClue").textContent = left;
-            document.getElementById("rightClue").textContent = right;
-        }
-
-        function handleMove(e) {
-            if (!isDragging || !canMoveNeedle) return;
-            const rect = needleContainer.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const angle = (Math.atan2(clientX - (rect.left + rect.width / 2), rect.bottom - clientY) * 180) / Math.PI;
-            needle.style.transform = `rotate(${Math.max(-90, Math.min(90, angle))}deg)`;
-        }
-
-        needleContainer.addEventListener("mousedown", () => { if(canMoveNeedle) isDragging = true; });
-        document.addEventListener("mousemove", handleMove);
-        document.addEventListener("mouseup", () => isDragging = false);
-
-        toggleButton.addEventListener("click", () => {
-            isTargetVisible = !isTargetVisible;
-            targetArea.style.display = isTargetVisible ? "block" : "none";
-            if (!isTargetVisible) {
-                toggleButton.textContent = "Reveal Target";
-                canMoveNeedle = true;
-                needle.style.display = "block";
-            } else {
-                toggleButton.style.display = "none";
-                const angle = parseFloat(needle.style.transform.replace("rotate(", "")) || 0;
-                const diff = Math.abs(angle - targetAngle);
-                let points = diff <= 4.5 ? 5 : diff <= 13.5 ? 3 : diff <= 22.5 ? 1 : 0;
-                teams[currentTeamIndex].score += points;
-                scoreElement.textContent = `${teams[currentTeamIndex].name} scored: ${points} points`;
-                if(points === 5) confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
-                updateScoreDisplay();
-                canMoveNeedle = false;
-            }
-        });
-
-        nextRoundButton.addEventListener("click", () => {
-            setTargetArea(); setRandomClues();
-            isTargetVisible = true; targetArea.style.display = "block";
-            toggleButton.textContent = "Hide Target"; toggleButton.style.display = "inline-block";
-            needle.style.transform = "rotate(0deg)"; needle.style.display = "none";
-            scoreElement.textContent = "";
-            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
-            updateScoreDisplay();
-        });
-
-        // Initialize
-        setTargetArea(); setRandomClues(); needle.style.display = "none";
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-</body>
-</html>
+            
+            const [l, r] = clues[Math.floor(Math.random() * clues.length)];
+            document.getElementById('leftClue').textContent = l;
+            document.getElementById('rightClue').textContent = r;
+            
+            isTargetVisible = true;
+            targetArea.style.display = 'block';
+            document.getElementById('needle').style.display = 'none';
+            document.getElementById('toggleButton').textContent = "
