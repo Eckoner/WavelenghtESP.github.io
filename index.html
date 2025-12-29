@@ -303,4 +303,69 @@
             isTargetVisible = true;
             targetArea.style.display = 'block';
             document.getElementById('needle').style.display = 'none';
-            document.getElementById('toggleButton').textContent = "
+            document.getElementById('toggleButton').textContent = "Ocultar Objetivo";
+            document.getElementById('toggleButton').style.display = "inline-block";
+            document.getElementById('score').textContent = "";
+            canMoveNeedle = false;
+        }
+
+        document.getElementById('toggleButton').onclick = function() {
+            const targetArea = document.getElementById('targetArea');
+            const needle = document.getElementById('needle');
+            if (isTargetVisible) {
+                isTargetVisible = false;
+                targetArea.style.display = 'none';
+                needle.style.display = 'block';
+                needle.style.transform = 'rotate(0deg)';
+                this.textContent = "Revelar Objetivo";
+                canMoveNeedle = true;
+            } else {
+                isTargetVisible = true;
+                targetArea.style.display = 'block';
+                this.style.display = 'none';
+                canMoveNeedle = false;
+                
+                const currentAngle = parseFloat(needle.style.transform.replace('rotate(','')) || 0;
+                const diff = Math.abs(currentAngle - targetAngle);
+                let points = diff <= 4.5 ? 5 : diff <= 13.5 ? 3 : diff <= 22.5 ? 1 : 0;
+                
+                teams[currentTeamIndex].score += points;
+                document.getElementById('score').textContent = `¡${teams[currentTeamIndex].name} ha ganado ${points} puntos!`;
+                if(points === 5) confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
+                updateScoreDisplay();
+            }
+        };
+
+        document.getElementById('nextRoundButton').onclick = () => {
+            currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+            resetRound();
+            updateScoreDisplay();
+        };
+
+        // CORRECCIÓN: El botón New Game ahora recarga la pantalla de inicio
+        document.getElementById('newGameButton').onclick = () => {
+            if(confirm("¿Seguro que quieres empezar de cero? Se borrarán los nombres y puntos.")) {
+                gameContainer.style.display = 'none';
+                teamSetup.style.display = 'block';
+            }
+        };
+
+        // Lógica de movimiento de aguja
+        const container = document.getElementById('needleContainer');
+        const needle = document.getElementById('needle');
+
+        container.onmousedown = () => { if(canMoveNeedle) isDragging = true; };
+        document.onmouseup = () => isDragging = false;
+        document.onmousemove = (e) => {
+            if (!isDragging) return;
+            const rect = container.getBoundingClientRect();
+            const angle = Math.atan2(e.clientX - (rect.left + rect.width / 2), rect.bottom - e.clientY) * 180 / Math.PI;
+            needle.style.transform = `rotate(${Math.max(-90, Math.min(90, angle))}deg)`;
+        };
+
+        // Modal functions
+        document.getElementById('howToPlayButton').onclick = () => document.getElementById('howToPlayModal').style.display = 'block';
+        function closeModal() { document.getElementById('howToPlayModal').style.display = 'none'; }
+    </script>
+</body>
+</html>
