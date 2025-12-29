@@ -24,10 +24,12 @@
         /* Switch de Modo */
         .view-toggle {
             position: fixed; top: 10px; right: 10px; z-index: 1000;
-            background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;
-            display: flex; align-items: center; gap: 8px; font-size: 0.8rem;
+            background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px;
+            display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
             border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+            backdrop-filter: blur(5px); transition: background 0.3s;
         }
+        .view-toggle:hover { background: rgba(255,255,255,0.2); }
 
         /* CONTENEDOR PRINCIPAL - Estética intacta */
         .container {
@@ -35,17 +37,17 @@
             padding: 3rem; border-radius: 30px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
             width: 900px; min-height: 750px; border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px); position: relative;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         /* CLASE PARA MODO MÓVIL (Escalado dinámico) */
         body.mobile-mode .container {
-            transform: scale(0.42); /* Ajuste base para móviles estándar */
+            transform: scale(0.42); 
             transform-origin: center center;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 950px) {
             body.mobile-mode .container {
-                transform: scale(calc(100vw / 1050)); /* Ajuste exacto al ancho de pantalla */
+                transform: scale(calc(100vw / 1000));
             }
         }
 
@@ -179,14 +181,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
-        /* LÓGICA DE VISTA */
+        /* LÓGICA DE DETECCIÓN Y VISTA */
         function toggleViewMode() {
             const isMobile = document.body.classList.toggle('mobile-mode');
             document.getElementById('viewIcon').innerText = isMobile ? '💻' : '📱';
             document.getElementById('viewText').innerText = isMobile ? 'Modo PC' : 'Modo Móvil';
         }
 
-        const allClues = [["Mala compañía", "Buena compañía"], ["Película terrible", "Gran película"], ["Persona olvidable", "Persona memorable"], ["Culturalmente insignificante", "Culturalmente significativo"], ["Comida seca", "Comida húmeda"], ["Fácil de hacer", "Difícil de hacer"], ["Se siente mal", "Se siente bien"], ["Sin pelo", "Peludo"], ["Difícil de recordar", "Fácil de recordar"], ["Frío", "Caliente"], ["Inflexible", "Flexible"], ["Comida limpia", "Comida pringosa"], ["Comida para comer con cubiertos", "Comida para comer con las manos"], ["Deseo", "Necesidad"], ["Cosa rara de tener", "Cosa normal de tener"], ["Mal fabricado", "Bien fabricado"], ["Lugar silencioso", "Lugar ruidoso"], ["Común", "Raro"], ["Mala influencia", "Modelo a seguir"], ["Animal puntiagudo", "Animal redondo"], ["Duro", "Blando"], ["Feo", "Precioso"], ["Trabajo mal pagado", "Trabajo sobrepagado"], ["Habilidad infravalorada", "Habilidad sobrevalorada"], ["Emoji nada sexy", "Emoji sexy"], ["Inútil", "Útil"], ["Villano", "Héroe"], ["El peor día de tu vida", "El mejor día de tu vida"], ["Hobby aburrido", "Hobby emocionante"], ["Superpoder inútil", "Superpoder increíble"], ["Truco de fiesta cutre", "Truco de fiesta genial"], ["Lugar terrible para una primera cita", "Lugar perfecto para una primera cita"], ["Tema de conversación incómodo", "Tema de conversación interesante"], ["El peor ingrediente para una pizza", "El mejor ingrediente para una pizza"], ["Sonido molesto", "Sonido satisfactorio"], ["Ropa incómoda", "Ropa cómoda"], ["El peor olor", "El mejor olor"], ["Asignatura aburrida", "Asignatura fascinante"], ["Regalo terrible", "Regalo detallista"], ["Hábito poco saludable", "Hábito saludable"], ["La peor tarea del hogar", "La tarea más satisfactoria"], ["Canción olvidable", "Canción pegadiza"], ["App inútil", "App imprescindible"], ["Nombre de supervillano cutre", "Nombre de superhéroe increíble"], ["Peor sabor", "Mejor sabor"], ["Exposición aburrida", "Exposición alucinante"], ["Nombre de banda terrible", "Nombre de banda increíble"], ["Peor frase de anuario", "Mejor frase de anuario"], ["Excusa cutre", "Excusa creíble"], ["Mascota de equipo terrible", "Mascota de equipo adorable"], ["Peor invento", "Invento que cambia la vida"], ["Anuncio molesto", "Anuncio memorable"], ["Peor frase para ligar", "Frase para ligar infalible"], ["Peor relleno para un sándwich", "Mejor relleno para un sándwich"], ["Salvapantallas aburrido", "Salvapantallas hipnótico"], ["Truco de vida inútil", "Truco de vida revolucionario"], ["Peor premisa de serie", "Premisa de serie desternillante"], ["Peor canción de karaoke", "Canción de karaoke que anima a todos"], ["Tendencia de redes molesta", "Tendencia de redes divertida"], ["Nombre artístico terrible", "Nombre artístico inolvidable"], ["Peor trabalenguas", "Trabalenguas más desafiante"], ["Tatuaje horrible", "Tatuaje con significado"], ["Pegatina de coche molesta", "Pegatina de coche ingeniosa"], ["Frase gancho molesta", "Frase gancho icónica"], ["Nombre de equipo terrible", "Nombre de equipo intimidante"], ["Peor combinación de sabores", "Combinación de sabores deliciosamente inesperada"], ["Carrera universitaria inútil", "Carrera que te cambia la vida"], ["Tema de podcast terrible", "Podcast para maratonear"], ["Peor atracción de feria", "Atracción de feria emocionante"], ["Truco de mascota molesto", "Truco de mascota impresionante"], ["Entrenamiento terrible", "Entrenamiento efectivo"], ["Peor juego de mesa", "Juego de mesa adictivo"], ["Hábito molesto", "Rasgo adorable"], ["Broma pesada de mal gusto", "Broma inofensiva"], ["Peor mascota de cereales", "Mascota de cereales querida"], ["Sonido de alarma molesto", "Alarma para despertar con suavidad"], ["Lugar de vacaciones terrible", "Destino de vacaciones soñado"], ["Juguete peor", "Juguete que todos quieren"], ["Personaje de TV molesto", "Personaje de TV favorito de los fans"], ["Efecto secundario de superpoder terrible", "Ventaja de superpoder increíble"], ["Peor sabor de helado", "Sabor de helado innovador"], ["Abreviatura de texto molesta", "Abreviatura de texto útil"], ["Idea de disfraz terrible", "Idea de disfraz creativa"], ["Peor error de cocina", "Truco de cocina revolucionario"], ["Ejercicio molesto", "Ejercicio divertido"], ["Peor método de ruptura", "Método de ruptura respetuoso"], ["Peor póster motivacional", "Póster que realmente motiva"], ["Función del coche molesta", "Función del coche útil"], ["Peor escondite", "Escondite ingenioso"], ["Peor tendencia de la era de tus padres", "Tendencia retro genial"], ["Comportamiento de turista molesto", "Comportamiento de turista respetuoso"], ["Peor hábito de compañero de piso", "Cualidad de compañero de piso ideal"], ["Peor excusa para faltar al trabajo", "Razón legítima para faltar al trabajo"], ["Notificación de móvil molesta", "Notificación de móvil importante"], ["Nombre de barco terrible", "Nombre de barco ingenioso"], ["Peor razón para romper", "Razón válida para romper"], ["Comportamiento en el gimnasio molesto", "Etiqueta de gimnasio adecuada"], ["Aerolínea terrible", "Aerolínea de primer nivel"], ["Peor graffiti de baño", "Graffiti de baño profundo"], ["Comportamiento en concierto molesto", "Comportamiento en concierto considerado"], ["Peor casa de Hogwarts", "Mejor casa de Hogwarts"], ["Peor razón para tener mascota", "Gran razón para tener mascota"], ["Asunto de email molesto", "Asunto de email que llama la atención"], ["Nombre de red WiFi terrible", "Nombre de red WiFi ingenioso"]];
+        // Auto-detección al inicio
+        window.onload = () => {
+            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 900;
+            if (isMobileDevice) {
+                document.body.classList.add('mobile-mode');
+                document.getElementById('viewIcon').innerText = '💻';
+                document.getElementById('viewText').innerText = 'Modo PC';
+            }
+        };
+
+        const allClues = [["Mala compañía", "Buena compañía"], ["Película terrible", "Gran película"], ["Persona olvidable", "Persona memorable"], ["Culturalmente insignificante", "Culturalmente significativo"], ["Comida seca", "Comida húmeda"], ["Fácil de hacer", "Difícil de hacer"], ["Se siente mal", "Se siente bien"], ["Sin pelo", "Peludo"], ["Difícil de recordar", "Fácil de recordar"], ["Frío", "Caliente"], ["Inflexible", "Flexible"], ["Comida limpia", "Comida pringosa"], ["Comida para comer con cubiertos", "Comida para comer con las manos"], ["Deseo", "Necesidad"], ["Cosa rara de tener", "Cosa normal de tener"], ["Mal fabricado", "Bien fabricado"], ["Lugar silencioso", "Lugar ruidoso"], ["Común", "Raro"], ["Mala influencia", "Modelo a seguir"], ["Animal puntiagudo", "Animal redondo"], ["Duro", "Blando"], ["Feo", "Precioso"], ["Trabajo mal pagado", "Trabajo sobrepagado"], ["Habilidad infravalorada", "Habilidad sobrevalorada"], ["Emoji nada sexy", "Emoji sexy"], ["Inútil", "Útil"], ["Villano", "Héroe"], ["El peor día de tu vida", "El mejor día de tu vida"], ["Hobby aburrido", "Hobby emocionante"], ["Superpoder inútil", "Superpoder increíble"], ["Truco de fiesta cutre", "Truco de fiesta genial"], ["Lugar terrible para una primera cita", "Lugar perfecto para una primera cita"], ["Tema de conversación incómodo", "Tema de conversación interesante"], ["El peor ingrediente para una pizza", "El mejor ingrediente para una pizza"], ["Sonido molesto", "Sonido satisfactorio"], ["Ropa incómoda", "Ropa cómoda"], ["El peor olor", "El mejor olor"], ["Asignatura aburrida", "Asignatura fascinante"], ["Regalo terrible", "Regalo detallista"], ["Hábito poco saludable", "Hábito saludable"], ["La peor tarea del hogar", "La tarea más satisfactoria"], ["Canción olvidable", "Canción pegadiza"], ["App inútil", "App imprescindible"], ["Nombre de supervillano cutre", "Nombre de superhéroe increíble"], ["Peor sabor", "Mejor sabor"], ["Exposición aburrida", "Exposición alucinante"], ["Nombre de banda terrible", "Nombre de banda increíble"], ["Peor frase de anuario", "Mejor frase de anuario"], ["Excusa cutre", "Excusa creíble"], ["Mascota de equipo terrible", "Mascota de equipo adorable"], ["Peor invento", "Invento que cambia la vida"], ["Anuncio molesto", "Anuncio memorable"], ["Peor frase para ligar", "Frase para ligar infalible"], ["Peor relleno para un sándwich", "Mejor relleno para un sándwich"], ["Salvapantallas aburrido", "Salvapantallas hipnótico"], ["Truco de vida inútil", "Truco de vida revolucionario"], ["Peor premisa de serie", "Premisa de serie desternillante"], ["Peor canción de karaoke", "Canción de karaoke que anima a todos"], ["Tendencia de redes molesta", "Tendencia de redes divertida"], ["Nombre artístico terrible", "Nombre artístico inolvidable"], ["Peor trabalenguas", "Trabalenguas más desafante"], ["Tatuaje horrible", "Tatuaje con significado"], ["Pegatina de coche molesta", "Pegatina de coche ingeniosa"], ["Frase gancho molesta", "Frase gancho icónica"], ["Nombre de equipo terrible", "Nombre de equipo intimidante"], ["Peor combinación de sabores", "Combinación de sabores deliciosamente inesperada"], ["Carrera universitaria inútil", "Carrera que te cambia la vida"], ["Tema de podcast terrible", "Podcast para maratonear"], ["Peor atracción de feria", "Atracción de feria emocionante"], ["Truco de mascota molesto", "Truco de mascota impresionante"], ["Entrenamiento terrible", "Entrenamiento efectivo"], ["Peor juego de mesa", "Juego de mesa adictivo"], ["Hábito molesto", "Rasgo adorable"], ["Broma pesada de mal gusto", "Broma inofensiva"], ["Peor mascota de cereales", "Mascota de cereales querida"], ["Sonido de alarma molesto", "Alarma para despertar con suavidad"], ["Lugar de vacaciones terrible", "Destino de vacaciones soñado"], ["Juguete peor", "Juguete que todos quieren"], ["Personaje de TV molesto", "Personaje de TV favorito de los fans"], ["Efecto secundario de superpoder terrible", "Ventaja de superpoder increíble"], ["Peor sabor de helado", "Sabor de helado innovador"], ["Abreviatura de texto molesta", "Abreviatura de texto útil"], ["Idea de disfraz terrible", "Idea de disfraz creativa"], ["Peor error de cocina", "Truco de cocina revolucionario"], ["Ejercicio molesto", "Ejercicio divertido"], ["Peor método de ruptura", "Método de ruptura respetuoso"], ["Peor póster motivacional", "Póster que realmente motiva"], ["Función del coche molesta", "Función del coche útil"], ["Peor escondite", "Escondite ingenioso"], ["Peor tendencia de la era de tus padres", "Tendencia retro genial"], ["Comportamiento de turista molesto", "Comportamiento de turista respetuoso"], ["Peor hábito de compañero de piso", "Cualidad de compañero de piso ideal"], ["Peor excusa para faltar al trabajo", "Razón legítima para faltar al trabajo"], ["Notificación de móvil molesta", "Notificación de móvil importante"], ["Nombre de barco terrible", "Nombre de barco ingenioso"], ["Peor razón para romper", "Razón válida para romper"], ["Comportamiento en el gimnasio molesto", "Etiqueta de gimnasio adecuada"], ["Aerolínea terrible", "Aerolínea de primer nivel"], ["Peor graffiti de baño", "Graffiti de baño profundo"], ["Comportamiento en concierto molesto", "Comportamiento en concierto considerado"], ["Peor casa de Hogwarts", "Mejor casa de Hogwarts"], ["Peor razón para tener mascota", "Gran razón para tener mascota"], ["Asunto de email molesto", "Asunto de email que llama la atención"], ["Nombre de red WiFi terrible", "Nombre de red WiFi ingenioso"]];
         
         let availableClues = [];
         const emojis = ["🚀", "🦁", "🍕", "💎", "🎮", "🎸", "🥑", "👻", "🦄", "🔥", "🌈", "👽", "👾", "🤖", "🏀", "🍿", "🐼", "🌍", "☀️", "🌙", "🧿", "🧠", "🍄", "🐱", "🍺"];
@@ -308,7 +320,8 @@
 
         function nextRound() {
             const mode = document.getElementById('gameMode').value;
-            const isEndOfTurnCycle = currentTeamIndex === ( (tiebreakerTeams.length > 0 ? tiebreakerTeams : teams).length - 1);
+            const currentList = tiebreakerTeams.length > 0 ? tiebreakerTeams : teams;
+            const isEndOfTurnCycle = currentTeamIndex === (currentList.length - 1);
             if (isEndOfTurnCycle) {
                 const maxScore = Math.max(...teams.map(t => t.score));
                 if ((mode === 'points' && maxScore >= targetScore) || (mode === 'rounds' && currentRound >= numRounds) || tiebreakerTeams.length > 0) {
@@ -345,7 +358,7 @@
             }).join('');
         }
 
-        /* CONTROL DE AGUJA - Soporte táctil añadido */
+        /* CONTROL DE AGUJA - Soporte táctil */
         let isDragging = false;
         const cont = document.getElementById('needleContainer');
         const handleStart = () => { if(gameState === 'TEAM_GUESS') isDragging = true; };
