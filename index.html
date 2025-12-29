@@ -29,8 +29,21 @@
 
         #gameContainer, #podiumScreen { display: none; }
 
-        .logo-placeholder { width: 100%; max-width: 550px; height: 180px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; }
-        .logo-placeholder img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* Contenedor del Logo */
+        .header-logo {
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
 
         .board { width: 600px; height: 300px; background-color: #111; border-radius: 300px 300px 0 0; position: relative; margin: 0 auto; overflow: hidden; border: 8px solid #222; }
         .board-cover { position: absolute; width: 100%; height: 100%; background-color: #050520; z-index: 20; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; letter-spacing: 2px; font-weight: bold; }
@@ -70,8 +83,8 @@
 <body>
 
     <div id="teamSetup" class="container">
-        <div class="logo-placeholder">
-            <img src="tu_logo.png" alt="WAVELENGTH LOGO" onerror="this.style.display='none'; this.parentNode.innerHTML='<h1 style=\'font-family:Orbitron; font-size:4rem; letter-spacing:10px;\'>WAVELENGTH</h1>'">
+        <div class="header-logo">
+            <img src="logo.png" alt="WAVELENGTH LOGO" onerror="this.style.display='none'; this.parentNode.innerHTML='<h1 style=\'font-family:Orbitron; font-size:4rem; letter-spacing:10px;\'>WAVELENGTH</h1>'">
         </div>
         
         <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; flex-wrap: wrap;">
@@ -165,7 +178,7 @@
         let currentTeamIndex = 0;
         let gameState = 'START';
         let currentRound = 1;
-        let tiebreakerTeams = []; // Equipos que participan en el desempate
+        let tiebreakerTeams = [];
 
         function updateTeamCount(val) { numTeams = Math.max(2, Math.min(12, numTeams + val)); document.getElementById('teamVal').innerText = numTeams; setupTeams(); }
         function updateRoundCount(val) { numRounds = Math.max(5, Math.min(15, numRounds + val)); document.getElementById('roundVal').innerText = numRounds; }
@@ -255,13 +268,7 @@
                 const diff = Math.abs(currentAngle - targetAngle);
                 let pts = diff <= 4.5 ? 5 : diff <= 13.5 ? 3 : diff <= 22.5 ? 1 : 0;
                 
-                // Aplicar puntos al equipo actual
-                let activeTeam;
-                if(tiebreakerTeams.length > 0) {
-                    activeTeam = tiebreakerTeams[currentTeamIndex];
-                } else {
-                    activeTeam = teams[currentTeamIndex];
-                }
+                let activeTeam = tiebreakerTeams.length > 0 ? tiebreakerTeams[currentTeamIndex] : teams[currentTeamIndex];
                 activeTeam.score += pts;
                 
                 const msg = document.getElementById('scoreMsg');
@@ -279,14 +286,11 @@
             const mode = document.getElementById('gameMode').value;
             const isTiebreaker = tiebreakerTeams.length > 0;
             const currentList = isTiebreaker ? tiebreakerTeams : teams;
-            
-            // ¿Es el fin de la vuelta actual? (Todos han jugado)
             const isEndOfTurnCycle = currentTeamIndex === (currentList.length - 1);
 
             if (isEndOfTurnCycle) {
                 const maxScore = Math.max(...teams.map(t => t.score));
                 
-                // Lógica de finalización
                 if (mode === 'points' && maxScore >= targetScore) {
                     checkWinnerOrTie(maxScore);
                     return;
@@ -295,13 +299,12 @@
                     checkWinnerOrTie(maxScore);
                     return;
                 }
-                
-                // Si es desempate y alguien ya va ganando solo tras terminar la ronda
                 if (isTiebreaker) {
                    checkWinnerOrTie(maxScore);
                    return;
                 }
 
+                // Incremento de ronda en modo infinito u otros
                 currentTeamIndex = 0;
                 currentRound++;
             } else {
@@ -313,10 +316,9 @@
         function checkWinnerOrTie(maxScore) {
             const winners = teams.filter(t => t.score === maxScore);
             if (winners.length > 1) {
-                // Hay empate, activar desempate
                 tiebreakerTeams = winners;
                 currentTeamIndex = 0;
-                currentRound++; // Ronda de desempate
+                currentRound++; 
                 newRound();
             } else {
                 showPodium();
@@ -337,16 +339,12 @@
         function updateScoreboard() {
             const isTiebreaker = tiebreakerTeams.length > 0;
             document.getElementById('scoreboard').innerHTML = teams.map((t, i) => {
-                const isMyTurn = isTiebreaker 
-                    ? (tiebreakerTeams[currentTeamIndex].id === t.id)
-                    : (currentTeamIndex === i);
+                const isMyTurn = isTiebreaker ? (tiebreakerTeams[currentTeamIndex].id === t.id) : (currentTeamIndex === i);
                 const isPlayingTiebreaker = isTiebreaker && tiebreakerTeams.some(tt => tt.id === t.id);
-                
                 return `<div class="score-item ${isMyTurn ? 'active-team-card' : ''}" style="border-bottom: 5px solid ${t.color}; opacity: ${isTiebreaker && !isPlayingTiebreaker ? '0.4' : '1'}">${t.emoji} ${t.name}: ${t.score}</div>`;
             }).join('');
         }
 
-        // Draggable Needle
         let isDragging = false;
         const cont = document.getElementById('needleContainer');
         cont.onmousedown = () => { if(gameState === 'TEAM_GUESS') isDragging = true; };
